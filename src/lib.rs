@@ -28,6 +28,16 @@ where
     update: UpdateHandler<UpdateRet>,
 }
 
+struct App {
+    show_popup: bool,
+}
+
+impl App {
+    fn new() -> App {
+        App { show_popup: false }
+    }
+}
+
 impl<'a, UpdateRet> Journal<'a, UpdateRet>
 where
     UpdateRet: Future<Output = anyhow::Result<()>>,
