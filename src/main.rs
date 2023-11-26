@@ -1,21 +1,12 @@
 use crossterm::event::{self, Event, KeyCode};
+use journal::*;
 use ratatui::widgets::*;
 
-use journal::*;
-struct App {
-    show_popup: bool,
-}
-
-impl App {
-    fn new() -> App {
-        App { show_popup: false }
-    }
-}
 #[tokio::main]
+
 async fn main() -> anyhow::Result<()> {
     let mut journal = Journal::new(ui, update)?;
     journal.run().await?;
-    let app = App::new();
     Ok(())
 }
 
@@ -49,6 +40,13 @@ fn ui(frame: &mut Frame<'_, '_>) {
             Constraint::Percentage(20),
         ])
         .split(frame.size());
+    let area = frame.size();
+    let popup_area = Rect {
+        x: area.width / 4,
+        y: area.height / 3,
+        width: area.width / 2,
+        height: area.height / 3,
+    };
     frame.render_widget(
         Paragraph::new("Hello World!").block(Block::default().title("date").borders(Borders::ALL)),
         layout[0],
@@ -62,4 +60,11 @@ fn ui(frame: &mut Frame<'_, '_>) {
         Paragraph::new("Hello World!").block(Block::default().title("tag").borders(Borders::ALL)),
         layout[4],
     );
+    let popup = Popup::default()
+        .content("Hello world!")
+        .style(Style::new().yellow())
+        .title("With Clear")
+        .title_style(Style::new().white().bold())
+        .border_style(Style::new().red());
+    frame.render_widget(popup, popup_area);
 }
