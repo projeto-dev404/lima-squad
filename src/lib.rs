@@ -8,8 +8,9 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
+use derive_setters::Setters;
 use futures_util::TryStreamExt;
-use ratatui::{prelude::CrosstermBackend, Frame as TuiFrame, Terminal};
+use ratatui::{prelude::*, widgets::*, Frame as TuiFrame, Terminal};
 
 pub mod database;
 
@@ -67,5 +68,32 @@ where
     fn drop(&mut self) {
         let _ = disable_raw_mode();
         let _ = self.stdout.execute(LeaveAlternateScreen);
+    }
+}
+#[derive(Debug, Default, Setters)]
+pub struct Popup<'a> {
+    #[setters(into)]
+    title: Line<'a>,
+    #[setters(into)]
+    content: Text<'a>,
+    border_style: Style,
+    title_style: Style,
+    style: Style,
+}
+
+impl Widget for Popup<'_> {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+        // ensure that all cells under the popup are cleared to avoid leaking content
+        // Clear.render(area, buf);
+        let block = Block::new()
+            .title(self.title)
+            .title_style(self.title_style)
+            .borders(Borders::ALL)
+            .border_style(self.border_style);
+        Paragraph::new(self.content)
+            .wrap(Wrap { trim: true })
+            .style(self.style)
+            .block(block)
+            .render(area, buf);
     }
 }
