@@ -13,4 +13,8 @@ crossterm = { version = "0.27.0", features = ["event-stream"] }
 derive_setters = "0.1.6"
 futures-util = "0.3.28"
 ratatui = "0.23.0"
+sqlx = { version = "0.7.3", features = ["runtime-tokio", "sqlite", "macros"] }
 tokio = { version = "1.33.0", features = ["rt", "rt-multi-thread", "macros", "fs", "io-util"] }
+
+[build-dependencies]
+dotenv-build = "0.1.1"
